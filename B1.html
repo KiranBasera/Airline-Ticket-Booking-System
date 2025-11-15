@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INFY Flight INFY 101 - Seat Booking</title>
+
+<!-- Firebase Scripts -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, getDocs, collection, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyDPyvuH4r-ggqYOcNBJBCiXxHaG_9yGpuU",
+    authDomain: "t-booking-system.firebaseapp.com",
+    projectId: "t-booking-system",
+    storageBucket: "t-booking-system.firebasestorage.app",
+    messagingSenderId: "381937607560",
+    appId: "1:381937607560:web:601534feba825dd356903d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const seatMap = document.getElementById('seatMap');
+  const totalSeats = 36;
+  let bookedSeats = [];
+
+  async function loadBookedSeats() {
+    const snapshot = await getDocs(collection(db, "bookedSeatsB1")); // Unique collection for INFY 101
+    snapshot.forEach(docSnap => bookedSeats.push(parseInt(docSnap.id)));
+    renderSeats();
+  }
+
+  function renderSeats() {
+    seatMap.innerHTML = ""; // Clear before rendering
+    for (let i = 1; i <= totalSeats; i++) {
+      const seat = document.createElement('div');
+      seat.classList.add('seat');
+      seat.textContent = i;
+
+      if (bookedSeats.includes(i)) {
+        seat.classList.add('booked');
+      } else {
+        seat.addEventListener('click', () => seat.classList.toggle('selected'));
+      }
+
+      seatMap.appendChild(seat);
+    }
+  }
+
+  window.confirmBooking = function () {
+    const selectedSeats = document.querySelectorAll('.seat.selected');
+    if (selectedSeats.length === 0) {
+      alert("Please select at least one seat.");
+      return;
+    }
+    document.getElementById('passengerForm').style.display = 'block';
+  }
+
+  window.submitForm = async function(event) {
+    event.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const age = document.getElementById('age').value.trim();
+    const passport = document.getElementById('passport').value.trim();
+
+    const selectedSeats = document.querySelectorAll('.seat.selected');
+    const seatNumbers = Array.from(selectedSeats).map(seat => seat.textContent);
+
+    if (seatNumbers.length === 0) {
+      alert("No seats selected.");
+      return;
+    }
+
+    try {
+      for (let seat of seatNumbers) {
+        await setDoc(doc(db, "bookedSeatsB1", seat), {
+          booked: true,
+          name: name,
+          age: parseInt(age),
+          passport: passport
+        });
+      }
+
+      const summary = `
+        <h3>Booking Summary</h3>
+        <strong>Name:</strong> ${name}<br>
+        <strong>Age:</strong> ${age}<br>
+        <strong>Passport No:</strong> ${passport}<br>
+        <strong>Seat(s):</strong> ${seatNumbers.join(", ")}
+      `;
+
+      document.getElementById('summaryBox').innerHTML = summary;
+      document.getElementById('summaryBox').style.display = 'block';
+      document.getElementById('passengerForm').style.display = 'none';
+      bookedSeats = [...bookedSeats, ...seatNumbers.map(n => parseInt(n))];
+      renderSeats();
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert("Failed to book seats. Please try again.");
+    }
+  }
+
+  loadBookedSeats();
+</script>
+
+<!-- Styles -->
+<style>
+body { font-family: 'Segoe UI', sans-serif; background: #f4faff; padding: 20px; margin: 0; }
+h2 { text-align: center; color: #0078d7; }
+.seat-map { display: grid; grid-template-columns: repeat(6, 50px); gap: 15px; justify-content: center; margin-top: 30px; }
+.seat { width: 50px; height: 50px; border-radius: 6px; background-color: #b2f2bb; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
+.booked { background-color: #ffa8a8; cursor: not-allowed; }
+.selected { background-color: #74c0fc; }
+.legend { display: flex; justify-content: center; gap: 30px; margin-top: 20px; }
+.legend div { display: flex; align-items: center; gap: 5px; }
+.legend-box { width: 20px; height: 20px; border-radius: 4px; }
+.legend-box.available { background-color: #b2f2bb; }
+.legend-box.booked { background-color: #ffa8a8; }
+.legend-box.selected { background-color: #74c0fc; }
+.btn-confirm { display: block; margin: 30px auto 20px; padding: 10px 25px; background-color: #0078d7; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+.btn-confirm:hover { background-color: #005fa3; }
+.passenger-form { display: none; max-width: 480px; margin: 0 auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+.passenger-form input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+.btn-submit { background-color: #28a745; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; font-size: 16px; cursor: pointer; }
+.btn-submit:hover { background-color: #218838; }
+.summary-box { display: none; max-width: 500px; margin: 20px auto; padding: 20px; background-color: #e3f0ff; border-left: 5px solid #0078d7; border-radius: 8px; font-size: 16px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div style="text-align:center; margin-bottom: 20px;">
+  <img src="head_logo1.png" alt="Head Logo" style="max-width: 200px; height: auto;">
+</div>
+
+<h2>INFY 101 - Morning Flight Seat Booking</h2>
+
+<div class="legend">
+  <div><div class="legend-box available"></div> Available</div>
+  <div><div class="legend-box booked"></div> Booked</div>
+  <div><div class="legend-box selected"></div> Selected</div>
+</div>
+
+<div class="seat-map" id="seatMap"></div>
+
+<button class="btn-confirm" onclick="confirmBooking()">Confirm Booking</button>
+
+<div class="passenger-form" id="passengerForm">
+  <h3>Passenger Information</h3>
+  <form onsubmit="submitForm(event)">
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="number" id="age" placeholder="Age" required>
+    <input type="text" id="passport" placeholder="Passport Number" required>
+    <button type="submit" class="btn-submit">Submit Booking</button>
+  </form>
+</div>
+
+<div class="summary-box" id="summaryBox"></div>
+
+</body>
+</html>

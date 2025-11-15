@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>User Profile | Airo</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDPyvuH4r-ggqYOcNBJBCiXxHaG_9yGpuU",
+      authDomain: "t-booking-system.firebaseapp.com",
+      projectId: "t-booking-system",
+      storageBucket: "t-booking-system.firebasestorage.app",
+      messagingSenderId: "381937607560",
+      appId: "1:381937607560:web:601534feba825dd356903d"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Show user info
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById("user-email").textContent = user.email;
+        document.getElementById("user-uid").textContent = user.uid;
+      } else {
+        alert("You must be logged in to view this page.");
+        window.location.href = "login.html";
+      }
+    });
+
+    // Logout
+    window.logoutUser = function () {
+      signOut(auth).then(() => {
+        alert("Logged out successfully.");
+        window.location.href = "login.html";
+      });
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .profile-box {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 350px;
+    }
+
+    .profile-box h2 {
+      margin-bottom: 20px;
+    }
+
+    .profile-box p {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .logout-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .logout-btn:hover {
+      background: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-box">
+    <h2>User Profile</h2>
+    <p><strong>Email:</strong> <span id="user-email">Loading...</span></p>
+    <p><strong>User ID (UID):</strong> <span id="user-uid">Loading...</span></p>
+    <button class="logout-btn" onclick="logoutUser()">Logout</button>
+  </div>
+</body>
+</html>

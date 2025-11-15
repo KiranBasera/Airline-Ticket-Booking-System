@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Details | INFY Airlines</title>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDPyvuH4r-ggqYOcNBJBCiXxHaG_9yGpuU",
+      authDomain: "t-booking-system.firebaseapp.com",
+      projectId: "t-booking-system",
+      storageBucket: "t-booking-system.firebasestorage.app",
+      messagingSenderId: "381937607560",
+      appId: "1:381937607560:web:601534feba825dd356903d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const tableBody = document.getElementById("bookingTableBody");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        document.getElementById("userEmail").textContent = user.email;
+
+        // Fetch bookings for this user
+        const q = query(collection(db, "bookedSeats202"), where("email", "==", user.email));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          tableBody.innerHTML = `<tr><td colspan="6">No bookings found.</td></tr>`;
+          return;
+        }
+
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>${docSnap.id}</td>
+            <td>${data.name || "-"}</td>
+            <td>${data.age || "-"}</td>
+            <td>${data.passport || "-"}</td>
+            <td>${data.email || "-"}</td>
+            <td><button class="btn-cancel" onclick="cancelBooking('${docSnap.id}')">Cancel</button></td>
+          `;
+          tableBody.appendChild(row);
+        });
+
+      } else {
+        alert("You must be logged in to view this page.");
+        window.location.href = "login.html";
+      }
+    });
+
+    window.cancelBooking = async function(seatId) {
+      if (confirm(`Do you really want to cancel booking for seat ${seatId}?`)) {
+        try {
+          await deleteDoc(doc(db, "bookedSeats202", seatId));
+          alert(`Booking for seat ${seatId} cancelled successfully.`);
+          location.reload();
+        } catch (err) {
+          console.error(err);
+          alert("Error cancelling booking. Try again.");
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f8ff;
+    }
+    header {
+      background-color: #0078d7;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    header h2 {
+      margin: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    table th {
+      background-color: #0078d7;
+      color: white;
+    }
+    .btn-cancel {
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-cancel:hover {
+      background-color: #c9302c;
+    }
+    .no-bookings {
+      text-align: center;
+      padding: 20px;
+      font-weight: bold;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Booking Details - <span id="userEmail">Loading...</span></h2>
+  </header>
+
+  <div class="container">
+    <table>
+      <thead>
+        <tr>
+          <th>Seat No</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Passport</th>
+          <th>Email</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="bookingTableBody">
+        <tr><td colspan="6" class="no-bookings">Loading bookings...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

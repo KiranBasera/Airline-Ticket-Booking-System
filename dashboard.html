@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flight Booking Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: white;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .top-header img {
+      height: 40px;
+    }
+
+    .top-header h2 {
+      color: #0078d7;
+      margin: 0;
+      font-size: 20px;
+    }
+
+   
+
+    .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0078d7;
+  padding: 10px 20px;
+}
+
+.navbar .left,
+.navbar .right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 120px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 1;
+  top: 30px;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 10px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+
+    .carousel {
+      position: relative;
+      margin: 20px auto;
+      max-width: 900px;
+      overflow: hidden;
+      border-radius: 15px;
+    }
+
+    .carousel-inner {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+
+    .carousel-item {
+      min-width: 100%;
+      transition: opacity 0.5s ease;
+      position: relative;
+    }
+
+    .carousel-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .carousel-caption {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .carousel-control {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 30px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.3);
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 2;
+    }
+.carousel {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: auto;
+      overflow: hidden;
+    }
+
+    .carousel-inner {
+      position: relative;
+      width: 100%;
+    }
+
+    .carousel-item {
+      display: none;
+    }
+
+    .carousel-item.active {
+      display: block;
+    }
+
+    .carousel img {
+      width: 100%;
+      height: auto;
+    }
+
+    .carousel-caption {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+      padding: 10px;
+    }
+
+    .carousel-control {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .carousel-control.prev {
+      left: 10px;
+    }
+
+    .carousel-control.next {
+      right: 10px;
+    }
+    .carousel-control.prev {
+      left: 10px;
+    }
+
+    .carousel-control.next {
+      right: 10px;
+    }
+
+    .image-row {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .image-row img {
+      width: 180px;
+      height: 120px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .feature-card {
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .feature-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .feature-card h3 {
+      margin: 10px;
+      font-size: 18px;
+      color: #0078d7;
+    }
+
+    .feature-card p {
+      margin: 0 10px 10px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    footer {
+      background-color: #0078d7;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      margin-top: 30px;
+    }
+  </style>
+  <style>
+    .profile-button {
+      display: inline-block;
+      margin-top: 5px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid white;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+
+    .profile-button img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-header">
+    <img src="aero_logo.png" alt="Aero Logo" />
+    <h2>WELCOME TO INFY AIRLINES</h2>
+    <img src="aero_logo.png" alt="Aero Logo" />
+  </div>
+
+  <div class="navbar">
+  <div class="left">
+    <a href="dashboard.html">Home</a>
+    <a href="profile.html" class="profile-button" title="Profile">
+      <img src="profilePhoto.jpg" alt="Profile" />
+    </a>
+    <a href="About.html">About</a>
+    <div class="dropdown">
+      <a href="javascript:void(0);" onclick="toggleDropdown()">Menu ▼</a>
+      <div class="dropdown-content" id="dropdownMenu">
+        <a href="Booking.html">Booking</a>
+        <a href="Cancelling.html">Cancelling</a>
+        <a href="details.html">Booking Details</a>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <a href="Login.html">Login</a>
+    <a href="signin.html">Sign up</a>
+  </div>
+</div>
+<script>
+  function toggleDropdown() {
+    const menu = document.getElementById("dropdownMenu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  }
+
+  // Hide dropdown if user clicks outside
+  window.addEventListener("click", function (event) {
+    const dropdown = document.querySelector(".dropdown");
+    const menu = document.getElementById("dropdownMenu");
+
+    if (!dropdown.contains(event.target)) {
+      menu.style.display = "none";
+    }
+  });
+</script>
+<div class="carousel">
+    <div class="carousel-inner" id="carouselInner">
+      <div class="carousel-item active">
+        <img src="background_img1.jpg" alt="Awesome Flight Experience" />
+        <div class="carousel-caption">Awesome Flight Experience</div>
+      </div>
+      <div class="carousel-item">
+        <img src="aeroplane_img.jpg" alt="Enjoy Nature" />
+        <div class="carousel-caption">Enjoy Nature</div>
+      </div>
+      <div class="carousel-item">
+        <img src="img4.jpg" alt="Economy Class" />
+        <div class="carousel-caption">Economy Class Comfort</div>
+      </div>
+      <div class="carousel-item">
+        <img src="img5.jpg" alt="Canteen" />
+        <div class="carousel-caption">Luxurious First Class</div>
+      </div>
+      <div class="carousel-item">
+        <img src="Dinner.jpg" alt="First Class" />
+        <div class="carousel-caption">In-flight Canteen</div>
+      </div>
+    </div>
+    <button class="carousel-control prev" onclick="moveSlide(-1)">&#10094;</button>
+    <button class="carousel-control next" onclick="moveSlide(1)">&#10095;</button>
+  </div>
+
+  <!-- ✅ JavaScript added here at the bottom -->
+  <script>
+    let currentSlide = 0;
+
+    function showSlide(index) {
+      const slides = document.querySelectorAll('.carousel-item');
+      const totalSlides = slides.length;
+
+      // Wrap around
+      currentSlide = (index + totalSlides) % totalSlides;
+
+      slides.forEach(slide => slide.classList.remove('active'));
+      slides[currentSlide].classList.add('active');
+    }
+
+    function moveSlide(step) {
+      showSlide(currentSlide + step);
+    }
+  </script>
+
+
+  <div class="image-row">
+    <img src="piolet.jpg" alt="Thumbnail 1" />
+    <img src="window1.jpg" alt="Thumbnail 2" />  
+    <img src="screen1.jpg" alt="Thumbnail 3" />
+    <img src="img4.jpg" alt="Thumbnail 4" />
+    <img src="img5.jpg" alt="Thumbnail 5" />
+  </div>
+
+  <div class="features">
+    <div class="feature-card">
+      <img src="window1.jpg" alt="Window View">
+      <h3>Window View</h3>
+      <p>Enjoy scenic views of clouds, sunrise, and the world below through clean and large windows.</p>
+    </div>
+    <div class="feature-card">
+      <img src="screen1.jpg" alt="Entertainment">
+      <h3>In-flight Entertainment</h3>
+      <p>Watch your favorite movies, shows, and music using our modern personal screen systems.</p>
+    </div>
+    <div class="feature-card">
+      <img src="login_background.jpg" alt="Wi-Fi & Charging">
+      <h3>Wi-Fi & Charging</h3>
+      <p>Stay connected and charged throughout the journey with onboard internet and USB ports.</p>
+    </div>
+    <div class="feature-card">
+      <img src="Dinner.jpg" alt="Menu">
+      <h3>Delicious Meals</h3>
+      <p>Choose from a range of Indian and international meals designed by top chefs.</p>
+    </div>
+    <div class="feature-card">
+      <img src="signup_icon.png" alt="Staff">
+      <h3>Friendly Staff</h3>
+      <p>Our courteous crew ensures your comfort, safety, and assistance throughout the flight.</p>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2022 FlightBooking. All rights reserved.
+  </footer>
+
+  <script>
+    let currentIndex = 0;
+    const items = document.querySelectorAll('.carousel-item');
+
+    function showSlide(index) {
+      items[currentIndex].classList.remove('active');
+      currentIndex = (index + items.length) % items.length;
+      items[currentIndex].classList.add('active');
+    }
+
+    function moveSlide(direction) {
+      showSlide(currentIndex + direction);
+    }
+  </script>
+
+</body>
+</html>
